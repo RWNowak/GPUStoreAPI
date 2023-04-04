@@ -1,9 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
-namespace GPUStoreAPI.Models
+namespace GPUStoreAPI.Models.DTO
 {
-    public class GPU
+    public class GPUDTO
     {
         [Required]
         [Key]
@@ -23,6 +22,5 @@ namespace GPUStoreAPI.Models
         [Required]
         [StringLength(50)]
         public string? Memory { get; set; }
-        public DateTime DateAdded { get; set; }
     }
 }
