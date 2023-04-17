@@ -9,15 +9,15 @@ namespace GPUStoreAPI.Controllers
     public class GPUStoreAPIController : ControllerBase
     {
         [HttpGet]
-        public IEnumerable<GPUDTO> GetGPUs() 
+        public ActionResult<IEnumerable<GPUDTO>> GetGPUs() 
         {
-            return GPUStore.GPUList;
+            return Ok(GPUStore.GPUList);
         }
 
         [HttpGet("{id:int}")]
-        public GPUDTO GetGPU(int id)
+        public ActionResult<GPUDTO> GetGPU(int id)
         {
-            return GPUStore.GPUList.FirstOrDefault(u => u.ID == id);
+            return Ok(GPUStore.GPUList.FirstOrDefault(u => u.ID == id));
         }
     }
 }
