@@ -9,15 +9,16 @@ namespace GPUStoreAPI.Controllers
     public class GPUStoreAPIController : ControllerBase
     {
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public ActionResult<IEnumerable<GPUDTO>> GetGPUs() 
         {
             return Ok(GPUStore.GPUList);
         }
 
         [HttpGet("{id:int}")]
-        [ProducesResponseType(200, Type = typeof(GPUDTO))]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(404)]
+        [ProducesResponseType(StatusCodes.Status200OK]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<GPUDTO> GetGPU(int id)
         {
             var gpu = GPUStore.GPUList.FirstOrDefault(u => u.ID == id);
