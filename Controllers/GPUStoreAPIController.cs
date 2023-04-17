@@ -17,7 +17,16 @@ namespace GPUStoreAPI.Controllers
         [HttpGet("{id:int}")]
         public ActionResult<GPUDTO> GetGPU(int id)
         {
-            return Ok(GPUStore.GPUList.FirstOrDefault(u => u.ID == id));
+            var gpu = GPUStore.GPUList.FirstOrDefault(u => u.ID == id);
+            if (id == 0)
+            {
+                return BadRequest();
+            }
+            if (gpu == null)
+            {
+                return NotFound();
+            }
+            return Ok(gpu);
         }
     }
 }
