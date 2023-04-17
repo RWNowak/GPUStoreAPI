@@ -14,7 +14,7 @@ namespace GPUStoreAPI.Controllers
             return GPUStore.GPUList;
         }
 
-        [HttpGet("id")]
+        [HttpGet("{id:int}")]
         public GPUDTO GetGPU(int id)
         {
             return GPUStore.GPUList.FirstOrDefault(u => u.ID == id);
