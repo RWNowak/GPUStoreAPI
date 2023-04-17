@@ -15,7 +15,7 @@ namespace GPUStoreAPI.Controllers
         }
 
         [HttpGet("{id:int}")]
-        [ProducesResponseType(200)]
+        [ProducesResponseType(200, Type = typeof(GPUDTO))]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         public ActionResult<GPUDTO> GetGPU(int id)
