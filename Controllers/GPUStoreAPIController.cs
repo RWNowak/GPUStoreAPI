@@ -1,6 +1,7 @@
 ﻿using GPUStoreAPI.Data;
 using GPUStoreAPI.Models.DTO;
 using Microsoft.AspNetCore.Mvc;
+using System.Data;
 
 namespace GPUStoreAPI.Controllers
 {
@@ -67,6 +68,25 @@ namespace GPUStoreAPI.Controllers
             }
 
             return CreatedAtRoute("GetGPU", new { id = gpuDTO.ID }, gpuDTO);
+        }
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [HttpDelete("{id:int}", Name = "DeleteGPU")]
+        public IActionResult DeleteGPU(int id) //IActionResult does not allow to specify return types
+        {
+            if (id == 0)
+            {
+                return BadRequest();
+            }
+            var gpu = GPUStore.GPUList.FirstOrDefault(u => u.ID == id);
+            if (gpu == null)
+            {
+                return NotFound();
+            }
+            GPUStore.GPUList.Remove(gpu);
+
+            return NoContent();
         }
     }
 }
