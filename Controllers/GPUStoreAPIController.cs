@@ -15,7 +15,7 @@ namespace GPUStoreAPI.Controllers
             return Ok(GPUStore.GPUList);
         }
 
-        [HttpGet("{id:int}")]
+        [HttpGet("{id:int}", Name="GetGPU")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -33,7 +33,7 @@ namespace GPUStoreAPI.Controllers
             return Ok(gpu);
         }
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -66,7 +66,7 @@ namespace GPUStoreAPI.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
 
-            return Ok(gpuDTO);
+            return CreatedAtRoute("GetGPU", new { id = gpuDTO.ID }, gpuDTO);
         }
     }
 }
