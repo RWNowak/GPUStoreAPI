@@ -88,5 +88,20 @@ namespace GPUStoreAPI.Controllers
 
             return NoContent();
         }
+        [HttpPut("{id:int}", Name = "UpdateGPU")]
+        public IActionResult UpdateGPU(int id, [FromBody] GPUDTO gpuDTO)
+        {
+            if (gpuDTO == null || id != gpuDTO.ID)
+            {
+                return BadRequest();
+            }
+            var gpu = GPUStore.GPUList.FirstOrDefault(u => u.ID == id);
+            gpu.Name = gpuDTO.Name;
+            gpu.Price = gpuDTO.Price;
+            gpu.Memory = gpuDTO.Memory;
+            gpu.Chip = gpuDTO.Chip;
+
+            return NoContent();
+        }
     }
 }
