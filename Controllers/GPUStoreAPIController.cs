@@ -1,7 +1,9 @@
 ﻿using GPUStoreAPI.Data;
 using GPUStoreAPI.Models.DTO;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
+using System.Web.Http.ModelBinding;
 
 namespace GPUStoreAPI.Controllers
 {
@@ -89,6 +91,8 @@ namespace GPUStoreAPI.Controllers
             return NoContent();
         }
         [HttpPut("{id:int}", Name = "UpdateGPU")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult UpdateGPU(int id, [FromBody] GPUDTO gpuDTO)
         {
             if (gpuDTO == null || id != gpuDTO.ID)
@@ -103,5 +107,27 @@ namespace GPUStoreAPI.Controllers
 
             return NoContent();
         }
+        [HttpPatch("{id:int}", Name = "UpdatePartialGPU")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult UpdatePartialGPU(int id, JsonPatchDocument<GPUDTO> patchDTO)
+        {
+            if (patchDTO == null || id == 0)
+            {
+                return BadRequest();
+            }
+            var gpu = GPUStore.GPUList.FirstOrDefault(u => u.ID == id);
+            if (gpu == null)
+            {
+                return BadRequest();
+            }
+            patchDTO.ApplyTo(gpu, ModelState);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            return NoContent();
+        }
+
     }
 }
