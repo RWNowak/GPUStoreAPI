@@ -1,4 +1,5 @@
 ﻿using GPUStoreAPI.Data;
+using GPUStoreAPI.Models;
 using GPUStoreAPI.Models.DTO;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
@@ -11,11 +12,17 @@ namespace GPUStoreAPI.Controllers
     [ApiController]
     public class GPUStoreAPIController : ControllerBase
     {
+        private readonly AppDbContext _db;
+        public GPUStoreAPIController(AppDbContext db)
+        {
+            _db = db;
+        }
+
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public ActionResult<IEnumerable<GPUDTO>> GetGPUs() 
         {
-            return Ok(GPUStore.GPUList);
+            return Ok(_db.GPUs.ToList());
         }
 
         [HttpGet("{id:int}", Name="GetGPU")]
@@ -24,7 +31,7 @@ namespace GPUStoreAPI.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<GPUDTO> GetGPU(int id)
         {
-            var gpu = GPUStore.GPUList.FirstOrDefault(u => u.ID == id);
+            var gpu = _db.GPUs.FirstOrDefault(u => u.ID == id);
             if (id == 0)
             {
                 return BadRequest();
@@ -62,7 +69,18 @@ namespace GPUStoreAPI.Controllers
             }
             try
             {
-                GPUStore.GPUList.Add(gpuDTO);
+                GPU model = new()
+                {
+                    ID = gpuDTO.ID,
+                    Name = gpuDTO.Name,
+                    Price = gpuDTO.Price,
+                    MemoryType = gpuDTO.MemoryType,
+                    Memory = gpuDTO.Memory,
+                    Chip = gpuDTO.Chip
+                };
+
+                _db.GPUs.Add(model);
+                _db.SaveChanges();
             }
             catch (Exception ex) 
             {
@@ -75,18 +93,19 @@ namespace GPUStoreAPI.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpDelete("{id:int}", Name = "DeleteGPU")]
-        public IActionResult DeleteGPU(int id) //IActionResult does not allow to specify return types
+        public IActionResult DeleteGPU(int id) 
         {
             if (id == 0)
             {
                 return BadRequest();
             }
-            var gpu = GPUStore.GPUList.FirstOrDefault(u => u.ID == id);
+            var gpu = _db.GPUs.FirstOrDefault(u => u.ID == id);
             if (gpu == null)
             {
                 return NotFound();
             }
-            GPUStore.GPUList.Remove(gpu);
+            _db.GPUs.Remove(gpu);
+            _db.SaveChanges();
 
             return NoContent();
         }
@@ -99,35 +118,62 @@ namespace GPUStoreAPI.Controllers
             {
                 return BadRequest();
             }
-            var gpu = GPUStore.GPUList.FirstOrDefault(u => u.ID == id);
-            gpu.Name = gpuDTO.Name;
-            gpu.Price = gpuDTO.Price;
-            gpu.Memory = gpuDTO.Memory;
-            gpu.Chip = gpuDTO.Chip;
+            GPU model = new()
+            {
+                ID = gpuDTO.ID,
+                Name = gpuDTO.Name,
+                Price = gpuDTO.Price,
+                MemoryType = gpuDTO.MemoryType,
+                Memory = gpuDTO.Memory,
+                Chip = gpuDTO.Chip
+            };
+            _db.GPUs.Update(model);
+            _db.SaveChanges();
+            return NoContent();
+        }
+        //[HttpPatch("{id:int}", Name = "UpdatePartialGPU")]
+        //[ProducesResponseType(StatusCodes.Status204NoContent)]
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
+        //public IActionResult UpdatePartialGPU(int id, JsonPatchDocument<GPUDTO> patchDTO)
+        //{
+        //    if (patchDTO == null || id == 0)
+        //    {
+        //        return BadRequest();
+        //    }
+        //    var gpu = _db.GPUs.FirstOrDefault(u => u.ID == id);
 
-            return NoContent();
-        }
-        [HttpPatch("{id:int}", Name = "UpdatePartialGPU")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult UpdatePartialGPU(int id, JsonPatchDocument<GPUDTO> patchDTO)
-        {
-            if (patchDTO == null || id == 0)
-            {
-                return BadRequest();
-            }
-            var gpu = GPUStore.GPUList.FirstOrDefault(u => u.ID == id);
-            if (gpu == null)
-            {
-                return BadRequest();
-            }
-            patchDTO.ApplyTo(gpu, ModelState);
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            return NoContent();
-        }
+        //    GPUDTO gpudto = new()
+        //    {
+        //        ID = gpu.ID,
+        //        Name = gpu.Name,
+        //        Price = gpu.Price,
+        //        MemoryType = gpu.MemoryType,
+        //        Memory = gpu.Memory,
+        //        Chip = gpu.Chip
+        //    };
+
+        //    if (gpu == null)
+        //    {
+        //        return BadRequest();
+        //    }
+        //    patchDTO.ApplyTo(gpudto, ModelState);
+        //    GPU model = new()
+        //    {
+        //        ID = gpu.ID,
+        //        Name = gpu.Name,
+        //        Price = gpu.Price,
+        //        MemoryType = gpu.MemoryType,
+        //        Memory = gpu.Memory,
+        //        Chip = gpu.Chip
+        //    };
+        //    _db.GPUs.Update(model);
+        //    _db.SaveChanges();
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return BadRequest(ModelState);
+        //    }
+        //    return NoContent();
+        //}
 
     }
 }

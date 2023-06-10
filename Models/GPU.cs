@@ -5,7 +5,7 @@ namespace GPUStoreAPI.Models
 {
     public class GPU
     {
-        [Required]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Key]
         public int ID { get; set; }
         [Required]

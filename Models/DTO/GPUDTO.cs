@@ -6,7 +6,6 @@ namespace GPUStoreAPI.Models.DTO
     public class GPUDTO
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        [Required]
         [Key]
         public int ID { get; set; }
         [Required]
